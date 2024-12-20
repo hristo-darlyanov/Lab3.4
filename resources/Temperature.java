@@ -22,7 +22,7 @@ public class Temperature implements Resource {
         }
         resourceLevel -= amountToConsume;
         if (resourceLevel <= 0) {
-            throw new ResourceDepletionException("Temperature too low.");
+            throw new ResourceDepletionException(this.getClass());
         }
     }
 

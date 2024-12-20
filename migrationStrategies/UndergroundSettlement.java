@@ -1,5 +1,6 @@
 package migrationStrategies;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 import characters.Citizen;
 import interfaces.Resource;
@@ -7,33 +8,33 @@ import jobs.*;
 import abstracts.MigrationStrategy;
 
 public class UndergroundSettlement extends MigrationStrategy {
-    int resourcesLevel;
-    int safety;
     List<Resource> resources;
 
-    public UndergroundSettlement(int resourcesLevel, int safety, List<Resource> resources) {
-        this.resourcesLevel = resourcesLevel;
-        this.safety = safety;
+    public UndergroundSettlement(List<Resource> resources) {
         this.resources = resources;
     }
 
     @Override
-    public void migrate(List<Citizen> citizens, List<Resource> resources) {
+    public List<Citizen> migrate(int amountOfCitizens, List<Resource> resources) {
         System.out.println("Migrating to underground settlement.");
-        for (Citizen citizen : citizens) {
+        List<Citizen> citizens = new ArrayList<>();
+        for (int i = 0; i < amountOfCitizens; i++) {
+            String name = "Citizen " + (i + 1);
             Random random = new Random();
             int jobChoice = random.nextInt(3);
             switch (jobChoice) {
                 case 0:
-                    citizen.setJob(new BuilderJob());
+                    citizens.add(new Citizen(name, new BuilderJob()));
                     break;
                 case 1:
-                    citizen.setJob(new HunterJob());
+                    citizens.add(new Citizen(name, new HunterJob()));
                     break;
                 case 2:
-                    citizen.setJob(null);
+                    citizens.add(new Citizen(name, null));
                     break;
             }
         }
+
+        return citizens;
     }
 }

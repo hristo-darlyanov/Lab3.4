@@ -2,32 +2,34 @@ package characters;
 import abstracts.Job;
 import java.util.Objects;
 
-public class Citizen{
-    public Job job;
-    public String name;
-
-    public Citizen(String name) {
-        this.name = name;
+public record Citizen(String name, Job job) {
+    public Job getJob() {
+        return this.job;
     }
 
-    public void setJob(Job job) {
-        this.job = job;
+    public String getName() {
+        return this.name;
     }
 
+    @Override
     public String toString() {
         return "Citizen{" +
                 "name='" + name + '\'' +
+                ", job=" + job +
                 '}';
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Citizen citizen = (Citizen) o;
-        return Objects.equals(name, citizen.name);
+        return Objects.equals(name, citizen.name) &&
+                Objects.equals(job, citizen.job);
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(name, job);
     }
 }

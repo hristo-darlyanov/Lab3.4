@@ -1,10 +1,12 @@
 package resources;
+
 import exceptions.ResourceDepletionException;
 import interfaces.Resource;
 import enums.ClimateType;
 
 public class Food implements Resource {
     int resourceLevel;
+
     public Food(int foodSupply) {
         this.resourceLevel = foodSupply;
     }
@@ -17,12 +19,16 @@ public class Food implements Resource {
                 amountToConsume = day * 2;
                 break;
             case WARM:
-                amountToConsume = day / 2;
+                try {
+                    amountToConsume = day / 2;
+                } catch (ArithmeticException e) {
+                    amountToConsume = 1;
+                }
                 break;
         }
         resourceLevel -= amountToConsume;
         if (resourceLevel <= 0) {
-            throw new ResourceDepletionException("Food depleted.");
+            throw new ResourceDepletionException(this.getClass());
         }
     }
 

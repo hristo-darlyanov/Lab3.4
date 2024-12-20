@@ -1,4 +1,6 @@
 package migrationStrategies;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import characters.Citizen;
@@ -7,33 +9,33 @@ import jobs.*;
 import abstracts.MigrationStrategy;
 
 public class UnderwaterSettlement extends MigrationStrategy {
-    int depth;
-    boolean oxygenSystem;
     List<Resource> resources;
 
-    public UnderwaterSettlement(int depth, boolean oxygenSystem, List<Resource> resources) {
-        this.depth = depth;
-        this.oxygenSystem = oxygenSystem;
+    public UnderwaterSettlement(List<Resource> resources) {
         this.resources = resources;
     }
 
     @Override
-        public void migrate(List<Citizen> citizens, List<Resource> resources) {
-            System.out.println("Migrating to underwater settlement.");
-            for (Citizen citizen : citizens) {
-                Random random = new Random();
-                int jobChoice = random.nextInt(3);
-                switch (jobChoice) {
-                    case 0:
-                        citizen.setJob(new BuilderJob());
-                        break;
-                    case 1:
-                        citizen.setJob(new EngineerJob());
-                        break;
-                    case 2:
-                        citizen.setJob(null);
-                        break;
-                }
+    public List<Citizen> migrate(int amountOfCitizens, List<Resource> resources) {
+        System.out.println("Migrating to underground settlement.");
+        List<Citizen> citizens = new ArrayList<>();
+        for (int i = 0; i < amountOfCitizens; i++) {
+            String name = "Citizen " + (i + 1);
+            Random random = new Random();
+            int jobChoice = random.nextInt(3);
+            switch (jobChoice) {
+                case 0:
+                    citizens.add(new Citizen(name, new BuilderJob()));
+                    break;
+                case 1:
+                    citizens.add(new Citizen(name, new EngineerJob()));
+                    break;
+                case 2:
+                    citizens.add(new Citizen(name, null));
+                    break;
             }
         }
+
+        return citizens;
+    }
 }

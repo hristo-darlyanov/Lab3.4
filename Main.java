@@ -1,14 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import characters.Citizen;
 import enums.ClimateType;
 import interfaces.Resource;
 import abstracts.MigrationStrategy;
 import migrationStrategies.*;
 import simulator.*;
 import resources.*;
-
 
 public class Main {
     public static void main(String[] args) {
@@ -17,13 +15,6 @@ public class Main {
         System.out.println("Enter the number of citizens:");
         int numCitizens = scanner.nextInt();
         scanner.nextLine();
-
-        List<Citizen> citizens = new ArrayList<>();
-        for (int i = 0; i < numCitizens; i++) {
-            String name = "Citizen " + (i + 1);
-
-            citizens.add(new Citizen(name));
-        }
 
         System.out.println("Choose a migration strategy (1: Underwater, 2: Underground):");
         int strategyChoice = scanner.nextInt();
@@ -41,13 +32,13 @@ public class Main {
 
         MigrationStrategy strategy;
         if (strategyChoice == 1) {
-            strategy = new UnderwaterSettlement(100, true, resources);
+            strategy = new UnderwaterSettlement(resources);
         } else {
-            strategy = new UndergroundSettlement(100, 50, resources);
+            strategy = new UndergroundSettlement(resources);
         }
         Environment environment = new Environment(ClimateType.COLD, resources);
 
-        ScenarioSimulator simulator = new ScenarioSimulator(citizens, environment, strategy);
+        ScenarioSimulator simulator = new ScenarioSimulator(numCitizens, environment, strategy);
         scanner.close();
         simulator.runSimulation();
     }

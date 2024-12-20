@@ -5,30 +5,32 @@ import interfaces.Resource;
 import resources.*;
 import jobs.*;
 import abstracts.MigrationStrategy;
+import abstracts.Job;
 import exceptions.ResourceDepletionException;
 
 public class ScenarioSimulator {
+    int amountOfCitizens;
     List<Citizen> citizens;
     Environment environment;
     MigrationStrategy strategy;
     boolean done = false;
     int day = 1;
 
-    public ScenarioSimulator(List<Citizen> citizens, Environment environment, MigrationStrategy strategy) {
-        this.citizens = citizens;
+    public ScenarioSimulator(int amountOfCitizens, Environment environment, MigrationStrategy strategy) {
+        this.amountOfCitizens = amountOfCitizens;
         this.environment = environment;
         this.strategy = strategy;
     }
 
     public void runSimulation() {
         System.out.println("Simulation starting...");
-        strategy.migrate(citizens, environment.resources);
+        citizens = strategy.migrate(amountOfCitizens, environment.resources);
         for (Citizen citizen : citizens) {
-            if (citizen.job == null) {
-                System.out.println(citizen.name + " is unemployed.");
+            if (citizen.getJob() == null) {
+                System.out.println(citizen.getName() + " is unemployed.");
                 continue;
             }
-            System.out.println(citizen.name + " is a " + citizen.job.getClass().getSimpleName());
+            System.out.println(citizen.getName() + " is a " + citizen.getJob().getClass().getSimpleName());
         }
 
         while (!done) {
@@ -38,16 +40,17 @@ public class ScenarioSimulator {
             System.out.println("Climate: " + environment.climate);
             
             for (Citizen citizen : citizens) {
-                if (citizen.job == null) {
-                    System.out.println(citizen.name + " is unemployed.");
+                Job citizenJob = citizen.getJob();
+                if (citizenJob == null) {
+                    System.out.println(citizen.getName() + " is unemployed.");
                     continue;
                 }
-                if (citizen.job instanceof EngineerJob) {
-                    citizen.job.performDuties(environment.returnResource(Oxygen.class));
-                } else if (citizen.job instanceof BuilderJob) {
-                    citizen.job.performDuties(environment.returnResource(Temperature.class));
-                } else if (citizen.job instanceof HunterJob) {
-                    citizen.job.performDuties(environment.returnResource(Food.class));
+                if (citizenJob instanceof EngineerJob) {
+                    citizenJob.performDuties(environment.returnResource(Oxygen.class));
+                } else if (citizenJob instanceof BuilderJob) {
+                    citizenJob.performDuties(environment.returnResource(Temperature.class));
+                } else if (citizenJob instanceof HunterJob) {
+                    citizenJob.performDuties(environment.returnResource(Food.class));
                 }
             }
 
@@ -55,7 +58,7 @@ public class ScenarioSimulator {
                 try {
                     resource.consume(day, environment.climate);
                 } catch (ResourceDepletionException e) {
-                    handle(e);
+                    System.out.println(e.getMessage());
                     System.out.println("Simulation ended.");
                     done = true;
                     break;
@@ -66,9 +69,5 @@ public class ScenarioSimulator {
             }
             day++;
         }
-    }
-
-    void handle(ResourceDepletionException e) {
-        System.out.println(e.getMessage());
     }
 }
