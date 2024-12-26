@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import enums.ClimateType;
 import interfaces.Resource;
+import interfaces.SimulationModifier;
 import abstracts.MigrationStrategy;
 import migrationStrategies.*;
 import simulator.*;
 import resources.*;
+import simulator.simulationModifiers.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -36,7 +37,15 @@ public class Main {
         } else {
             strategy = new UndergroundSettlement(resources);
         }
-        Environment environment = new Environment(ClimateType.COLD, resources);
+
+        List<SimulationModifier> simulationModifiers = new ArrayList<>();
+        SimulationModifier temperatureEffect = new TemperatureEffect();
+        SimulationModifier climateEffect = new ClimateEffect();
+        SimulationModifier relicEffect = new RelicEffect();
+        simulationModifiers.add(temperatureEffect);
+        simulationModifiers.add(climateEffect);
+        simulationModifiers.add(relicEffect);
+        Environment environment = new Environment(simulationModifiers, resources);
 
         ScenarioSimulator simulator = new ScenarioSimulator(numCitizens, environment, strategy);
         scanner.close();

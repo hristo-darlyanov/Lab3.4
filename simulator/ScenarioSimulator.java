@@ -37,7 +37,10 @@ public class ScenarioSimulator {
             System.out.println("");
             System.out.println("Day " + day + ": Simulation running...");
             environment.simulateChange();
-            System.out.println("Climate: " + environment.climate);
+
+            for (Enum<?> effect : environment.effects) {
+                System.out.println("Effect: " + effect);
+            }
             
             for (Citizen citizen : citizens) {
                 Job citizenJob = citizen.getJob();
@@ -56,7 +59,7 @@ public class ScenarioSimulator {
 
             for (Resource resource : environment.resources) {
                 try {
-                    resource.consume(day, environment.climate);
+                    resource.consume(day, environment.effects);
                 } catch (ResourceDepletionException e) {
                     System.out.println(e.getMessage());
                     System.out.println("Simulation ended.");
@@ -67,6 +70,7 @@ public class ScenarioSimulator {
             for (Resource resource : environment.resources) {
                 System.out.println(resource.getClass().getSimpleName() + " level: " + resource.getLevel());
             }
+            environment.passDay();
             day++;
         }
     }

@@ -1,8 +1,9 @@
 package resources;
-
+import java.util.ArrayList;
 import exceptions.ResourceDepletionException;
 import interfaces.Resource;
-import enums.ClimateType;
+import enums.RelicEffectType;
+import enums.TemperatureEffectType;
 
 public class Oxygen implements Resource {
     int resourceLevel;
@@ -12,20 +13,24 @@ public class Oxygen implements Resource {
     }
 
     @Override
-    public void consume(int day, ClimateType climateType) throws ResourceDepletionException {
+    public void consume(int day, ArrayList<Enum<?>> effects) throws ResourceDepletionException {
         int amountToConsume = 0;
-        switch (climateType) {
-            case COLD:
+        for (Enum<?> effect : effects) {
+            if (effect.equals(TemperatureEffectType.COLD)) {
                 amountToConsume = day * 2;
-                break;
-            case WARM:
+            } else if (effect.equals(TemperatureEffectType.WARM)) {
                 try {
                     amountToConsume = day / 2;
                 } catch (ArithmeticException e) {
                     amountToConsume = 1;
                 }
-                break;
+            } else if (effect.equals(RelicEffectType.RESOURCE_DECREASE)) {
+                amountToConsume += 5;
+            } else if (effect.equals(RelicEffectType.RESOURCE_INCREASE)) {
+                amountToConsume -= 5;
+            }
         }
+
         resourceLevel -= amountToConsume;
         if (resourceLevel <= 0) {
             throw new ResourceDepletionException(this.getClass());
